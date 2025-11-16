@@ -47,10 +47,10 @@ export default function Home() {
     }
 
     const sections = [
-        about && { data: about, id: "about" },
-        experience && { data: experience, id: "experience" },
-        projects && { data: projects, id: "projects" },
-    ].filter(Boolean) as { data: any; id: string }[];
+        about && { data: about, id: "about" as const },
+        experience && { data: experience, id: "experience" as const },
+        projects && { data: projects, id: "projects" as const },
+    ].filter((section): section is { data: SectionData; id: "about" | "experience" | "projects" } => Boolean(section && section.data));
 
     return (
         <>

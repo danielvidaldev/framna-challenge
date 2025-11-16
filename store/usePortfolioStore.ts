@@ -5,14 +5,12 @@ import { SectionData, Project } from "@/types";
 import { ApiService } from "@/lib/api";
 
 interface PortfolioStore {
-  // State
   about: SectionData | null;
   experience: SectionData | null;
   projects: SectionData | null;
   isLoading: boolean;
   error: string | null;
 
-  // Actions
   fetchAllData: () => Promise<void>;
   updateSection: (id: string, data: Partial<SectionData>) => Promise<void>;
   addProject: (project: Project) => Promise<void>;
@@ -21,20 +19,17 @@ interface PortfolioStore {
 }
 
 export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
-  // Initial state
   about: null,
   experience: null,
   projects: null,
   isLoading: false,
   error: null,
 
-  // Fetch all data
   fetchAllData: async () => {
     set({ isLoading: true, error: null });
     try {
       const sections = await ApiService.getAllSections();
 
-      // Match by ID instead of title for reliability
       const about = sections.find((s) => s.id === "1");
       const experience = sections.find((s) => s.id === "2");
       const projects = sections.find((s) => s.id === "3");
@@ -56,12 +51,10 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
     }
   },
 
-  // Update any section
   updateSection: async (id: string, data: Partial<SectionData>) => {
     try {
       const updated = (await ApiService.updateSection(id, data)) as SectionData;
 
-      // Update the appropriate section in state based on ID
       if (id === "1") {
         set({ about: updated });
       } else if (id === "2") {
@@ -77,7 +70,6 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
     }
   },
 
-  // Add project to projects section
   addProject: async (project: Project) => {
     try {
       const currentProjects = get().projects;
@@ -97,7 +89,6 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
     }
   },
 
-  // Delete project from projects section
   deleteProject: async (projectIndex: number) => {
     try {
       const currentProjects = get().projects;

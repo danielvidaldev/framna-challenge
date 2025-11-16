@@ -9,19 +9,16 @@ import { Button } from "@/components/ui/Button";
 interface SectionFormProps {
     title: string;
     data: SectionData;
-    onDataChange: (data: SectionData) => void;
     onSave: (data: SectionData) => void;
 }
 
 export const SectionForm: React.FC<SectionFormProps> = ({
     title,
     data,
-    onDataChange,
     onSave,
 }) => {
     const [localData, setLocalData] = useState(data);
 
-    // Sync local state when external data changes
     useEffect(() => {
         setLocalData(data);
     }, [data]);

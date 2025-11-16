@@ -36,17 +36,14 @@ export class ApiService {
         return response.json();
     }
 
-    // Get all sections
     static async getAllSections() {
-        return this.fetchData<any[]>(RESOURCE_NAME);
+        return this.fetchData<SectionData[]>(RESOURCE_NAME);
     }
 
-    // Update a specific section
-    static async updateSection(id: string, data: any) {
+    static async updateSection(id: string, data: unknown) {
         return this.putData(RESOURCE_NAME, id, data);
     }
 
-    // Get section by title
     static async getSectionByTitle(title: string) {
         const sections = await this.getAllSections();
         return sections.find(
@@ -54,7 +51,6 @@ export class ApiService {
         );
     }
 
-    // Test connection
     static async testConnection(): Promise<{ success: boolean; message: string }> {
         try {
             const response = await fetch(`${API_BASE_URL}/${RESOURCE_NAME}`);

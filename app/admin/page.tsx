@@ -21,7 +21,6 @@ export default function AdminPage() {
         deleteProject,
     } = usePortfolioStore();
 
-    // Local state for form inputs
     const [saveIndicator, setSaveIndicator] = useState(false);
 
     const [newProject, setNewProject] = useState<Project>({
@@ -128,7 +127,6 @@ export default function AdminPage() {
                     <SectionForm
                         title="About Section"
                         data={about}
-                        onDataChange={(data) => handleSaveSection(data)}
                         onSave={handleSaveSection}
                     />
                 )}
@@ -137,7 +135,6 @@ export default function AdminPage() {
                     <SectionForm
                         title="Experience Section"
                         data={experience}
-                        onDataChange={(data) => handleSaveSection(data)}
                         onSave={handleSaveSection}
                     />
                 )}
@@ -146,7 +143,6 @@ export default function AdminPage() {
                     <SectionForm
                         title="Projects Section"
                         data={projects}
-                        onDataChange={(data) => handleSaveSection(data)}
                         onSave={handleSaveSection}
                     />
                 )}
