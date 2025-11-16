@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import { usePortfolioStore } from "@/store/usePortfolioStore";
 import { Header } from "@/components/Header";
-import { SectionCard } from "@/components/SectionCard";
-import { ProjectGrid } from "@/components/ProjectGrid";
+import { SectionCard } from "@/app/_components/SectionCard";
+import { ProjectGrid } from "@/app/_components/ProjectGrid";
 import { SectionData } from "@/types";
 
 export default function Home() {
@@ -71,6 +71,7 @@ export default function Home() {
                                 description={section.data.description}
                                 picture={section.data.image}
                                 index={i}
+                                priority={i === 0}
                                 ref={(el: HTMLElement | null) => {
                                     if (el) sectionRefs.current[i] = el;
                                 }}

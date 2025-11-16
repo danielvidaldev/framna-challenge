@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { usePortfolioStore } from "@/store/usePortfolioStore";
 import { Project, SectionData } from "@/types";
 import Link from "next/link";
-import { SectionForm } from "@/components/admin/SectionForm";
-import { ProjectForm } from "@/components/admin/ProjectForm";
+import Image from "next/image";
+import { SectionForm } from "@/app/admin/_components/SectionForm";
+import { ProjectForm } from "@/app/admin/_components/ProjectForm";
 import { Button } from "@/components/ui/Button";
 
 export default function AdminPage() {
@@ -180,23 +181,34 @@ export default function AdminPage() {
                                     </div>
                                 ) : (
                                     <>
-                                        <div className="flex-1">
+                                        {project.image && (
+                                            <div className="relative w-32 h-32 shrink-0 rounded-xl overflow-hidden border-2 border-black shadow-md">
+                                                <Image
+                                                    src={project.image}
+                                                    alt={project.title}
+                                                    fill
+                                                    className="object-cover"
+                                                    unoptimized
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="flex-1 min-w-0">
                                             <strong className="block mb-2 text-lg">
                                                 {project.title}
                                             </strong>
-                                            <p className="mb-2">{project.description}</p>
-                                            <small>
+                                            <p className="mb-2 text-sm">{project.description}</p>
+                                            <small className="text-xs">
                                                 <a
                                                     href={project.project_url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-text-dark break-all"
+                                                    className="text-text-dark break-all hover:text-black transition-colors"
                                                 >
                                                     {project.project_url}
                                                 </a>
                                             </small>
                                         </div>
-                                        <div className="flex gap-4 max-md:w-full">
+                                        <div className="flex gap-4 shrink-0 max-md:w-full">
                                             <Button
                                                 onClick={() => handleEditProject(index, project)}
                                                 className="px-6 py-2 max-md:flex-1"
