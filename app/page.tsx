@@ -1,35 +1,23 @@
-"use client";
-
-import { useEffect, useRef, useMemo } from "react";
-import { usePortfolioStore } from "@/store/usePortfolioStore";
+import { ApiService } from "@/lib/api";
 import { Header } from "@/components/Header";
 import { SectionCard } from "@/app/_components/SectionCard";
 import { ProjectGrid } from "@/app/_components/ProjectGrid";
+import { SectionData } from "@/types";
 
-export default function Home() {
-    const { sections, isLoading, error, fetchAllData } = usePortfolioStore();
+// This page uses Static Site Generation (SSG)
+// Data is fetched at build time for optimal performance
+export default async function Home() {
+    let sections: SectionData[] = [];
+    let error: string | null = null;
 
-    useEffect(() => {
-        fetchAllData();
-    }, [fetchAllData]);
-
-    const sectionRefs = useRef<(HTMLElement | null)[]>([]);
-
-    const headerSections = useMemo(
-        () => sections.map((s) => ({ id: s.id, title: s.title })),
-        [sections]
-    );
-
-    if (isLoading) {
-        return (
-            <>
-                <Header sections={[]} />
-                <div className="flex items-center justify-center min-h-screen text-2xl text-text-dark bg-linear-to-br from-white to-gray-50">
-                    Loading portfolio...
-                </div>
-            </>
-        );
+    try {
+        // Fetch data at build time (SSG)
+        sections = await ApiService.getAllSections();
+    } catch (err) {
+        error = err instanceof Error ? err.message : "Failed to load portfolio data";
     }
+
+    const headerSections = sections.map((s) => ({ id: s.id, title: s.title }));
 
     if (error) {
         return (
@@ -67,9 +55,6 @@ export default function Home() {
                                 description={section.description}
                                 picture={section.image}
                                 priority={i === 0}
-                                ref={(el: HTMLElement | null) => {
-                                    if (el) sectionRefs.current[i] = el;
-                                }}
                             >
                                 {section.projects && section.projects.length > 0 && (
                                     <ProjectGrid projects={section.projects} />
