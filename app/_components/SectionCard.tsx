@@ -78,7 +78,7 @@ export const SectionCard = forwardRef<HTMLElement, SectionCardProps>(({
                 }
             }}
             id={id}
-            className="w-full max-w-full bg-linear-to-br from-white via-white to-gray-50/50 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-500 overflow-hidden border border-gray-200/50 mb-24 will-change-transform"
+            className="w-full max-w-full bg-linear-to-br from-white via-white to-gray-50/50 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-500 overflow-hidden border border-gray-200/50 mb-40 will-change-transform"
             style={{
                 opacity,
                 transform: `translateX(${translateX}px)`,
