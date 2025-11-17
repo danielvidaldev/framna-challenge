@@ -11,9 +11,7 @@ import { Button } from "@/components/ui/Button";
 
 export default function AdminPage() {
     const {
-        about,
-        experience,
-        projects,
+        sections,
         isLoading,
         fetchAllData,
         updateSection,
@@ -36,6 +34,8 @@ export default function AdminPage() {
     useEffect(() => {
         fetchAllData();
     }, [fetchAllData]);
+
+    const projectsSection = sections.find((s) => s.id === "3");
 
     const showSaveIndicator = () => {
         setSaveIndicator(true);
@@ -74,16 +74,16 @@ export default function AdminPage() {
     };
 
     const handleUpdateProject = async () => {
-        if (editingProjectIndex !== null && editingProject && projects) {
-            const updatedProjects = [...(projects.projects || [])];
+        if (editingProjectIndex !== null && editingProject && projectsSection) {
+            const updatedProjects = [...(projectsSection.projects || [])];
             updatedProjects[editingProjectIndex] = editingProject;
 
             const updatedSection = {
-                ...projects,
+                ...projectsSection,
                 projects: updatedProjects,
             };
 
-            await updateSection(projects.id, updatedSection);
+            await updateSection(projectsSection.id, updatedSection);
             showSaveIndicator();
 
             setEditingProjectIndex(null);
@@ -123,31 +123,19 @@ export default function AdminPage() {
                     </Link>
                 </div>
 
-                {about && (
+                {/* Dynamically render all sections */}
+                {sections.map((section) => (
                     <SectionForm
-                        title="About Section"
-                        data={about}
+                        key={section.id}
+                        title={`${section.title} Section`}
+                        data={section}
                         onSave={handleSaveSection}
                     />
-                )}
+                ))}
 
-                {experience && (
-                    <SectionForm
-                        title="Experience Section"
-                        data={experience}
-                        onSave={handleSaveSection}
-                    />
-                )}
-
-                {projects && (
-                    <SectionForm
-                        title="Projects Section"
-                        data={projects}
-                        onSave={handleSaveSection}
-                    />
-                )}
-
-                <section className="bg-white border-2 border-black rounded-3xl p-12 mb-8 shadow-hover max-md:p-6">
+                {/* Projects management - only show if we have a projects section */}
+                {projectsSection && (
+                    <section className="bg-white border-2 border-black rounded-3xl p-12 mb-8 shadow-hover max-md:p-6">
                     <h2 className="text-3xl font-bold text-black m-0 mb-8 pb-4 border-b-2 border-accent max-md:text-2xl">
                         Individual Projects
                     </h2>
@@ -160,7 +148,7 @@ export default function AdminPage() {
                     />
 
                     <div className="grid gap-6 mt-8">
-                        {projects?.projects?.map((project, index) => (
+                        {projectsSection.projects?.map((project, index) => (
                             <div
                                 key={`${project.title}-${index}`}
                                 className="p-6 bg-gray-100 border-2 border-black rounded-2xl flex justify-between items-start gap-6 transition-all duration-300 hover:shadow-hover-active max-md:flex-col"
@@ -225,6 +213,7 @@ export default function AdminPage() {
                         ))}
                     </div>
                 </section>
+                )}
             </div>
 
             <div

@@ -24,9 +24,17 @@ export const Header: React.FC<HeaderProps> = ({ sections }) => {
         setIsMenuOpen(false);
     };
 
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setIsMenuOpen(false);
+    };
+
     return (
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b-2 border-black px-12 py-3 flex justify-between items-center shadow-md max-md:px-6 max-md:py-2">
-            <div className="text-2xl font-bold text-black tracking-tight">
+            <div
+                className="text-2xl font-bold text-black tracking-tight cursor-pointer transition-opacity duration-200 hover:opacity-70"
+                onClick={scrollToTop}
+            >
                 Portfolio
             </div>
 

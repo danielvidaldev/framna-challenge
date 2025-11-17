@@ -50,8 +50,8 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 onChange={(e) => onProjectChange({ ...project, project_url: e.target.value })}
             />
 
-            <div className="flex mt-4">
-                {onSave && <Button className="w-full" onClick={onSave}>{submitLabel}</Button>}
+            <div className="flex mt-4 space-x-4 justify-end">
+                {onSave && <Button onClick={onSave}>{submitLabel}</Button>}
                 {onCancel && <Button onClick={onCancel}>Cancel</Button>}
             </div>
         </>
