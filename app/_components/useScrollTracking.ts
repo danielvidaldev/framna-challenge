@@ -28,12 +28,12 @@ export const useScrollTracking = (sections: readonly string[]) => {
                     }
                 });
 
-                if (mostVisible && maxRatio > 0.3) {
+                if (mostVisible && maxRatio > 0.2) {
                     setActiveSection(mostVisible);
                 }
             },
             {
-                rootMargin: `-${HEADER_HEIGHT}px 0px -20% 0px`,
+                rootMargin: `-${HEADER_HEIGHT}px 0px -30% 0px`,
                 threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
             }
         );
