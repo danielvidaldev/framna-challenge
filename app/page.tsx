@@ -1,27 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { usePortfolioStore } from "@/store/usePortfolioStore";
 import { Header } from "@/components/Header";
 import { SectionCard } from "@/app/_components/SectionCard";
 import { ProjectGrid } from "@/app/_components/ProjectGrid";
-import { SectionData } from "@/types";
 
 export default function Home() {
-    const { about, experience, projects, isLoading, error, fetchAllData } =
-        usePortfolioStore();
+    const { sections, isLoading, error, fetchAllData } = usePortfolioStore();
 
     useEffect(() => {
         fetchAllData();
     }, [fetchAllData]);
 
-    // Array of refs for all SectionCards
     const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+
+    const headerSections = useMemo(
+        () => sections.map((s) => ({ id: s.id, title: s.title })),
+        [sections]
+    );
 
     if (isLoading) {
         return (
             <>
-                <Header />
+                <Header sections={[]} />
                 <div className="flex items-center justify-center min-h-screen text-2xl text-text-dark bg-linear-to-br from-white to-gray-50">
                     Loading portfolio...
                 </div>
@@ -32,7 +34,7 @@ export default function Home() {
     if (error) {
         return (
             <>
-                <Header />
+                <Header sections={[]} />
                 <div className="flex items-center justify-center min-h-screen text-2xl text-error text-center px-12 bg-linear-to-br from-white to-gray-50">
                     <div>
                         <h2 className="mb-6">Error loading portfolio</h2>
@@ -46,15 +48,9 @@ export default function Home() {
         );
     }
 
-    const sections = [
-        about && { data: about, id: "about" as const },
-        experience && { data: experience, id: "experience" as const },
-        projects && { data: projects, id: "projects" as const },
-    ].filter((section): section is { data: SectionData; id: "about" | "experience" | "projects" } => Boolean(section && section.data));
-
     return (
         <>
-            <Header />
+            <Header sections={headerSections} />
             <div className="bg-linear-to-br from-white via-gray-50 to-white min-h-screen pt-20">
                 <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(193,255,114,0.1)_0%,transparent_50%)]" />
@@ -67,17 +63,16 @@ export default function Home() {
                             <SectionCard
                                 key={section.id}
                                 id={section.id}
-                                title={section.data.title}
-                                description={section.data.description}
-                                picture={section.data.image}
-                                index={i}
+                                title={section.title}
+                                description={section.description}
+                                picture={section.image}
                                 priority={i === 0}
                                 ref={(el: HTMLElement | null) => {
                                     if (el) sectionRefs.current[i] = el;
                                 }}
                             >
-                                {section.id === "projects" && (
-                                    <ProjectGrid projects={section.data.projects || []} />
+                                {section.id === "3" && (
+                                    <ProjectGrid projects={section.projects || []} />
                                 )}
                             </SectionCard>
                         );

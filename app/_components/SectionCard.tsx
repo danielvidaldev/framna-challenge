@@ -1,16 +1,13 @@
 "use client";
 
-import React, { useRef, forwardRef } from "react";
+import React, { forwardRef } from "react";
 import Image from "next/image";
-import { useStickyPosition } from "@/hooks/useStickyPosition";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 interface SectionCardProps {
     id: string;
     title: string;
     description: string;
     picture: string;
-    index: number;
     children?: React.ReactNode;
     priority?: boolean;
 }
@@ -20,25 +17,14 @@ export const SectionCard = forwardRef<HTMLElement, SectionCardProps>(({
     title,
     description,
     picture,
-    index,
     children,
     priority = false,
 }, ref) => {
-    const internalRef = useRef<HTMLElement>(null);
-    const cardRef = (ref as React.RefObject<HTMLElement>) || internalRef;
-
-    const { stickyTop, zIndex } = useStickyPosition(index);
-    useScrollAnimation(cardRef, index, stickyTop);
-
     return (
         <section
-            ref={cardRef}
+            ref={ref}
             id={id}
-            className="w-full bg-white/90 backdrop-blur-sm rounded-card-lg shadow-card overflow-hidden sticky transition-all duration-300 ease-out border-2 border-accent/30"
-            style={{
-                top: `${stickyTop}px`,
-                zIndex,
-            }}
+            className="w-full bg-white/90 backdrop-blur-sm rounded-card-lg shadow-card overflow-hidden border-2 border-accent/30 mb-8"
         >
             <div className="bg-linear-to-r from-accent to-accent-dark px-8 py-6 max-md:px-6 max-md:py-4">
                 <h2 className="m-0 text-3xl font-bold text-text-dark text-center max-md:text-2xl">

@@ -10,17 +10,46 @@ export const useScrollTracking = (sections: readonly string[]) => {
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
+                const visibleSections = new Map<string, number>();
+
                 entries.forEach((entry) => {
-                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-                        setActiveSection(entry.target.id);
+                    if (entry.isIntersecting) {
+                        visibleSections.set(entry.target.id, entry.intersectionRatio);
                     }
                 });
+
+                let maxRatio = 0;
+                let mostVisible = "";
+
+                visibleSections.forEach((ratio, id) => {
+                    if (ratio > maxRatio) {
+                        maxRatio = ratio;
+                        mostVisible = id;
+                    }
+                });
+
+                if (mostVisible && maxRatio > 0.3) {
+                    setActiveSection(mostVisible);
+                }
             },
             {
-                rootMargin: `-${HEADER_HEIGHT}px 0px -40% 0px`,
-                threshold: [0, 0.25, 0.5, 0.75, 1],
+                rootMargin: `-${HEADER_HEIGHT}px 0px -20% 0px`,
+                threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
             }
         );
+
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+
+            if (scrollTop + windowHeight >= documentHeight) {
+                const lastSection = sections[sections.length - 1];
+                if (lastSection && activeSection !== lastSection) {
+                    setActiveSection(lastSection);
+                }
+            }
+        };
 
         sections.forEach((sectionId) => {
             const element = document.getElementById(sectionId);
@@ -29,13 +58,19 @@ export const useScrollTracking = (sections: readonly string[]) => {
             }
         });
 
-        return () => observer.disconnect();
-    }, [sections]);
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        handleScroll();
+
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, [sections, activeSection]);
 
     const scrollToSection = (id: string) => {
         const element = document.getElementById(id);
         if (element) {
-            element.scrollIntoView({ behavior: "smooth", block: "start" });
+            element.scrollIntoView({ block: "start" });
         }
     };
 

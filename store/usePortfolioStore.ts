@@ -5,9 +5,7 @@ import { SectionData, Project } from "@/types";
 import { ApiService } from "@/lib/api";
 
 interface PortfolioStore {
-  about: SectionData | null;
-  experience: SectionData | null;
-  projects: SectionData | null;
+  sections: SectionData[];
   isLoading: boolean;
   error: string | null;
 
@@ -19,9 +17,7 @@ interface PortfolioStore {
 }
 
 export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
-  about: null,
-  experience: null,
-  projects: null,
+  sections: [],
   isLoading: false,
   error: null,
 
@@ -30,14 +26,8 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
     try {
       const sections = await ApiService.getAllSections();
 
-      const about = sections.find((s) => s.id === "1");
-      const experience = sections.find((s) => s.id === "2");
-      const projects = sections.find((s) => s.id === "3");
-
       set({
-        about: about || null,
-        experience: experience || null,
-        projects: projects || null,
+        sections: sections || [],
         isLoading: false,
       });
     } catch (error) {
@@ -54,14 +44,11 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
   updateSection: async (id: string, data: Partial<SectionData>) => {
     try {
       const updated = (await ApiService.updateSection(id, data)) as SectionData;
-
-      if (id === "1") {
-        set({ about: updated });
-      } else if (id === "2") {
-        set({ experience: updated });
-      } else if (id === "3") {
-        set({ projects: updated });
-      }
+      const currentSections = get().sections;
+      const updatedSections = currentSections.map((section) =>
+        section.id === id ? updated : section
+      );
+      set({ sections: updatedSections });
     } catch (error) {
       set({
         error:
@@ -72,14 +59,20 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
 
   addProject: async (project: Project) => {
     try {
-      const currentProjects = get().projects;
-      if (currentProjects) {
+      const currentSections = get().sections;
+      const projectsSection = currentSections.find((s) => s.id === "3");
+
+      if (projectsSection) {
         const updatedProjects = {
-          ...currentProjects,
-          projects: [...(currentProjects.projects || []), project],
+          ...projectsSection,
+          projects: [...(projectsSection.projects || []), project],
         };
-        await ApiService.updateSection(currentProjects.id, updatedProjects);
-        set({ projects: updatedProjects });
+        await ApiService.updateSection(projectsSection.id, updatedProjects);
+
+        const updatedSections = currentSections.map((section) =>
+          section.id === "3" ? updatedProjects : section
+        );
+        set({ sections: updatedSections });
       }
     } catch (error) {
       set({
@@ -91,17 +84,23 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
 
   deleteProject: async (projectIndex: number) => {
     try {
-      const currentProjects = get().projects;
-      if (currentProjects && currentProjects.projects) {
-        const updatedProjectsList = currentProjects.projects.filter(
-          (_, index) => index !== projectIndex
+      const currentSections = get().sections;
+      const projectsSection = currentSections.find((s) => s.id === "3");
+
+      if (projectsSection && projectsSection.projects) {
+        const updatedProjectsList = projectsSection.projects.filter(
+          (_: Project, index: number) => index !== projectIndex
         );
         const updatedProjects = {
-          ...currentProjects,
+          ...projectsSection,
           projects: updatedProjectsList,
         };
-        await ApiService.updateSection(currentProjects.id, updatedProjects);
-        set({ projects: updatedProjects });
+        await ApiService.updateSection(projectsSection.id, updatedProjects);
+
+        const updatedSections = currentSections.map((section) =>
+          section.id === "3" ? updatedProjects : section
+        );
+        set({ sections: updatedSections });
       }
     } catch (error) {
       set({
