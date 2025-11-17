@@ -11,6 +11,7 @@ export interface Project {
   description: string;
   image: string;
   project_url: string;
+  section_id?: string;
 }
 
 export interface PortfolioData {

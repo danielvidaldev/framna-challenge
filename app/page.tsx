@@ -71,8 +71,8 @@ export default function Home() {
                                     if (el) sectionRefs.current[i] = el;
                                 }}
                             >
-                                {section.id === "3" && (
-                                    <ProjectGrid projects={section.projects || []} />
+                                {section.projects && section.projects.length > 0 && (
+                                    <ProjectGrid projects={section.projects} />
                                 )}
                             </SectionCard>
                         );

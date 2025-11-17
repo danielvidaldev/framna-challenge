@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Project } from "@/types";
+import { Project, SectionData } from "@/types";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
@@ -12,6 +12,7 @@ interface ProjectFormProps {
     onSave?: () => void;
     onCancel?: () => void;
     submitLabel?: string;
+    sections?: SectionData[];
 }
 
 export const ProjectForm: React.FC<ProjectFormProps> = ({
@@ -20,6 +21,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
     onSave,
     onCancel,
     submitLabel = "Add Project",
+    sections = [],
 }) => {
     return (
         <>
@@ -49,6 +51,25 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 value={project.project_url}
                 onChange={(e) => onProjectChange({ ...project, project_url: e.target.value })}
             />
+
+            {sections.length > 0 && (
+                <div className="mb-4">
+                    <label className="block text-sm font-semibold mb-2 text-black">
+                        Attach to Section
+                    </label>
+                    <select
+                        className="w-full px-4 py-3 border-2 border-black rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+                        value={project.section_id || "3"}
+                        onChange={(e) => onProjectChange({ ...project, section_id: e.target.value })}
+                    >
+                        {sections.map((section) => (
+                            <option key={section.id} value={section.id}>
+                                {section.title} (ID: {section.id})
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
 
             <div className="flex mt-4 space-x-4 justify-end">
                 {onSave && <Button onClick={onSave}>{submitLabel}</Button>}

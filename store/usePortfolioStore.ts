@@ -12,7 +12,7 @@ interface PortfolioStore {
   fetchAllData: () => Promise<void>;
   updateSection: (id: string, data: Partial<SectionData>) => Promise<void>;
   addProject: (project: Project) => Promise<void>;
-  deleteProject: (projectIndex: number) => Promise<void>;
+  deleteProject: (projectIndex: number, sectionId?: string) => Promise<void>;
   testConnection: () => Promise<{ success: boolean; message: string }>;
 }
 
@@ -60,17 +60,18 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
   addProject: async (project: Project) => {
     try {
       const currentSections = get().sections;
-      const projectsSection = currentSections.find((s) => s.id === "3");
+      const sectionId = project.section_id || "3";
+      const targetSection = currentSections.find((s) => s.id === sectionId);
 
-      if (projectsSection) {
+      if (targetSection) {
         const updatedProjects = {
-          ...projectsSection,
-          projects: [...(projectsSection.projects || []), project],
+          ...targetSection,
+          projects: [...(targetSection.projects || []), project],
         };
-        await ApiService.updateSection(projectsSection.id, updatedProjects);
+        await ApiService.updateSection(targetSection.id, updatedProjects);
 
         const updatedSections = currentSections.map((section) =>
-          section.id === "3" ? updatedProjects : section
+          section.id === sectionId ? updatedProjects : section
         );
         set({ sections: updatedSections });
       }
@@ -82,23 +83,23 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
     }
   },
 
-  deleteProject: async (projectIndex: number) => {
+  deleteProject: async (projectIndex: number, sectionId: string = "3") => {
     try {
       const currentSections = get().sections;
-      const projectsSection = currentSections.find((s) => s.id === "3");
+      const targetSection = currentSections.find((s) => s.id === sectionId);
 
-      if (projectsSection && projectsSection.projects) {
-        const updatedProjectsList = projectsSection.projects.filter(
+      if (targetSection && targetSection.projects) {
+        const updatedProjectsList = targetSection.projects.filter(
           (_: Project, index: number) => index !== projectIndex
         );
         const updatedProjects = {
-          ...projectsSection,
+          ...targetSection,
           projects: updatedProjectsList,
         };
-        await ApiService.updateSection(projectsSection.id, updatedProjects);
+        await ApiService.updateSection(targetSection.id, updatedProjects);
 
         const updatedSections = currentSections.map((section) =>
-          section.id === "3" ? updatedProjects : section
+          section.id === sectionId ? updatedProjects : section
         );
         set({ sections: updatedSections });
       }
